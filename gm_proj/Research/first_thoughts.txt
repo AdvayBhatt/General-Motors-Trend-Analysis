@@ -1,0 +1,90 @@
+
+Predict whether a person/household would be likely to use an EV given the NHTS survey datasets, particularly a GM-brand EV out of GM vehicle users, and analyze the most important factors.
+
+Target:
+Hybrid (HYBRID) CHAR:
+01 for yes
+02 for no
+
+but this project is for General Motors (GMC) which owns Buick, Cadillac, Chevrolet, and naturally GMC
+so we need:
+Make of the car (MAKE) CHAR:
+
+ 00=Suppressed for confidential reason 
+ 02=Jeep 554 
+ 06=Chrysler 
+ 07=Dodge 
+ 12=Ford 
+ 13=Lincoln 
+ 18=Buick / Opel 
+ 19=Cadillac 
+ 20=Chevrolet 
+ 22=Pontiac 
+ 23=GMC 
+ 29=Other Domestic Manufacturers (e.g., Tesla) 
+ 30=Volkswagen 
+ 32=Audi 
+ 34=BMW 
+ 35=Nissan/Datsun 
+ 37=Honda 
+ 41=Mazda 
+ 42=Mercedes-Benz 
+ 48=Subaru 
+ 49=Toyota 
+ 51=Volvo 
+ 52=Mitsubishi 
+ 54=Acura
+ 55=Hyundai 
+ 58=Infiniti 
+ 59=Lexus 
+ 63=KIA 
+ 72=Harley-Davidson 
+ 98=Other Make
+ 
+ Vehicle Fuel (VEHFUEL) CHAR:
+ 
+ -9=Not ascertained
+ 01=Gas 
+ 02=Diesel 
+ 03=Biodiesel 
+ 04=Plug-in hybrid 
+ 05=Electric only 
+ 06=Hybrid, gas/electric, non plug-in 
+ 97=Uses other fuel
+
+
+Features:
+
+DEMOGRAPHIC:
+Household income (HHFAMINC) CHAR
+
+ -7=I prefer not to answer 
+ -8=I don't know 
+ 01=Less than $10,000 
+ 02=$10,000 to $14,999 
+ 03=$15,000 to $24,999 
+ 04=$25,000 to $34,999
+ 05=$35,000 to $49,999 
+ 06=$50,000 to $74,999 
+ 07=$75,000 to $99,999 
+ 08=$100,000 to $124,999 
+ 09=$125,000 to $149,999 
+ 10=$150,000 to $199,999 
+ 11=$200,000 or more
+
+
+
+Household size (HHSIZE: count of people in house 1 person to 10 people) NUM
+
+Urban Size (URBANSIZE) CHAR
+
+ 01=50,000-199,999 
+ 02=200,000-499,999 
+ 03=500,000-999,999 
+ 04=1,000,000 or more with heavy rail 
+ 05=1,000,000 or more without heavy rail 
+ 06=Not in urbanized area
+
+
+Urban or rural classification (URBAN: 2 or 1) CHAR
+
