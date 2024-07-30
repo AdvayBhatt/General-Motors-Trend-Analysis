@@ -43,35 +43,10 @@ Make of the car (MAKE) CHAR:
  
  Vehicle Fuel (VEHFUEL) CHAR:
  
- -9=Not ascertained
- 01=Gas 
- 02=Diesel 
- 03=Biodiesel 
- 04=Plug-in hybrid 
- 05=Electric only 
- 06=Hybrid, gas/electric, non plug-in 
- 97=Uses other fuel
+
 
 
 Features:
-
-DEMOGRAPHIC:
-Household income (HHFAMINC) CHAR
-
- -7=I prefer not to answer 
- -8=I don't know 
- 01=Less than $10,000 
- 02=$10,000 to $14,999 
- 03=$15,000 to $24,999 
- 04=$25,000 to $34,999
- 05=$35,000 to $49,999 
- 06=$50,000 to $74,999 
- 07=$75,000 to $99,999 
- 08=$100,000 to $124,999 
- 09=$125,000 to $149,999 
- 10=$150,000 to $199,999 
- 11=$200,000 or more
-
 
 
 Household size (HHSIZE: count of people in house 1 person to 10 people) NUM
@@ -87,4 +62,159 @@ Urban Size (URBANSIZE) CHAR
 
 
 Urban or rural classification (URBAN: 2 or 1) CHAR
+
+
+
+Features:
+
+'HOUSEID' - used for joining 
+'VEHID' - unique id 
+'VEHYEAR' - year bought
+'MAKE' - Vehicle manufacturer (like GM)
+'VEHTYPE' - type of car like automobile, SUV, van
+'VEHFUEL' - fuel it runs on
+	 -9=Not ascertained
+         01=Gas 
+	 02=Diesel 
+	 03=Biodiesel 
+	 04=Plug-in hybrid 
+	 05=Electric only 
+ 	 06=Hybrid, gas/electric, non plug-in 
+ 	 97=Uses other fuel
+
+'VEHCOMMERCIAL' - bool on whether you use for commercial purposes
+'VEHCOM_RS' - bool on whether used for rideshare (*)
+'VEHCOM_DEL' - bool on whether used for delivery (*)
+'VEHCOM_OTH' - bool on whether used for other business purposes (*)
+'COMMERCIALFREQ' - over past 30 days, nr days used for business purposes (*)
+'HHVEHUSETIME_RS' - 30 day q. for rideshare (*)
+'HHVEHUSETIME_DEL' - 30 day q. for delivery(*)
+'HHVEHUSETIME_OTH' - 30 day q. for other business activity (* same as COMMERCIALFREQ)
+'VEHOWNED' - bool on whether owned for 1 year or more
+'WHOMAIN' - main 'driver' from 'Person 1' to 'Person 8' (*PERSONID isn't here so useless)
+'VEHCASEID' - unique vehicle id
+'ANNMILES', - annual miles from 0-200,000
+'HYBRID' - bool on whether hybrid or not
+	01 for yes
+	02 for no
+'VEHAGE' - vehicle age from 1 to 40 
+'VEHOWNMO'- for vehicles owned less than a year, number of months owned 01 - 11
+
+For the following three, there is an assumption that travel patterns will be significantly different by day the survey was sent to people, so there must be weights to account for that:
+'WTHHFIN' - analysis of all 7 days
+
+'WTHHFIN5D' - analysis of 5 day weekdays
+
+'WTHHFIN2D' - analysis of weekends
+
+
+'NUMADLT' - count of adults (18+) from 1 to 8
+
+'HOMEOWN' - whether home was rented or bought
+	 01=Owned by hh member with mortgage or loan 8,873 
+         02=Owned by hh member free and clear (no mortgage) 4,227 
+         03=Rented by hh member 3,666 
+         04=Occupied without payment
+
+'HOMETYPE' - type of home from:
+	01=One-family detached 5,430
+ 	02=One-family attached (townhome, condo) 748 
+ 	03=Building with 2 or more apartments 1,437 
+ 	04=Mobile home 263 
+ 	05=Boat, RV, van, etc
+'RAIL' - bool on MSA heavy rail status [MSA is Metropolitian Statistical Area which is county/counties with at least one urban center with at least pop. of 50,000]
+
+'CENSUS_D' - Census DIVISION where subjects live
+	 01=New England 772 10,927,940
+ 	 02=Middle Atlantic 1,485 24,750,219
+ 	 03=East North Central 2,543 36,750,324
+	 04=West North Central
+
+'CENSUS_R' - Census REGION where subjects live
+	01=Northeast 2,257 35,678,159
+ 	02=Midwest 3,707 54,041,226
+ 	03=South 5,349 86,698,403
+ 	04=West
+'HH_HISP' - either 1 Hispanic or latino, or 2 Not (*)
+'DRVRCNT' - Driver count from 0 to 7
+'CNTTDHH' - Count for household trips on a travel day 0-45
+'CDIVMSAR' - Grouping of household by combination of Census division, MSA status, and presence of rail
+
+'FLAG100' whether all HH members completed the survey 01 is 100%, 02 is 75-99%
+'HHFAMINC' - bad version of HHFAMINC with some I don't prefer to answer (*)
+'HHFAMINC_IMP' - HHFAMINC has inputed data meaning it's now an OBJECT and they typed in the actual range
+	Less than $10,000     301 
+        $10,000 to $14,999    245
+	$15,000 to $24,999    470 
+        $25,000 to $34,999    560 
+        $35,000 to $49,999    831 
+        $50,000 to $74,999    1,415 
+        $75,000 to $99,999    1,132 
+        $100,000 to $124,999  909 
+        $125,000 to $149,999  617 
+        $150,000 to $199,999  599 
+        $200,000 or more      814
+'HH_RACE' - race of subject:
+	01=White 6,664
+ 	02=Black or African American 579 
+	03=Asian 388 
+ 	04=American Indian/Alaska Native 39 
+ 	05=Native Hawaiian/Pacific Islander 19 
+ 	06=Multiple races selected 29 
+ 	97=Other race 175
+'HHSIZE' - total number of people in house from 1-10
+'HHVEHCNT' - total number of vehicles in house from 0-17
+'HHRELATD' - at least two people related in HH: 01 is at least two people are related, 02 is no related people in hh
+'LIF_CYC' - classifying family size/structure
+ 	01=one adult, no children 1,281
+ 	02=2+ adults, no children 3,258 
+ 	03=one adult, youngest child 0-5 137 
+	04=2+ adults, youngest child 0-5 2,010 
+ 	05=one adult, youngest child 6-15 502 
+ 	06=2+ adults, youngest child 6-15 3,167
+ 	07=one adult, youngest child 16-21 199 
+ 	08=2+ adults, youngest child 16-21 906 
+ 	09=one adult, retired, no children 990 
+ 	10=2+ adults, retired, no children
+'MSACAT' -  
+	01=MSA of 1 million or more, with rail 6,729 
+ 	02=MSA of 1 million or more, without rail 9,994 
+ 	03=MSA less than 1 million 12,896 
+ 	04=Not in MSA  1,455
+'MSASIZE' - MSA pop. categorization based on five year ACS API
+	01=In an MSA of Less than 250,000 		5,529 
+ 	02=In an MSA of 250,000 - 499,999 		3,078
+	03=In an MSA of 500,000 - 999,999 		4,289 
+ 	04=In an MSA or CMSA of 1,000,000 - 2,999,999   7,177 
+ 	05=In an MSA or CMSA of 3 million or more       9,546 
+ 	06=Not in MSA or CMSA                           1,455
+
+'TRAVDAY' - Travel day of the week from 1-7 ('Sunday' to 'Saturday')
+'URBAN' - urban classification based on 2020 TIGER/Line Shapefile
+	01=In an urban area 9,815 157,410,063
+ 	02=In an Urban cluster 1,269 20,124,009
+ 	03=In an area surrounded by urban areas 2 27,588
+ 	04=Not in urban area 1,586
+
+'URBANSIZE' - size of urban area
+	01=50,000-199,999 1,420 
+	02=200,000-499,999 1,595 
+ 	03=500,000-999,999 1,387 
+ 	04=1,000,000 or more with heavy rail 2,361 
+ 	05=1,000,000 or more without heavy rail 3,052 
+ 	06=Not in urbanized area 2,261
+'URBRUR' whether 
+	01 (urban) or 
+	02 (rural)
+
+'URBRUR_2010' - whether 01 (urban) or 02 (rural): Household in urban/rural area based on 2010 Census
+
+
+
+'PPT517' - count of children 5-17 years old in house from 0 to 6
+'YOUNGCHILD' - count of HH members under 5 years old 0 to 4
+'RESP_CNT' - Count of respondents in HH from 1 to 10
+'TDAYDATE' - Date of travel day (YYYYMM)
+'WRKCOUNT' - count of workers in the household from 0 - 6
+'STRATUMID' - household stratum ID
 
