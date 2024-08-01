@@ -83,22 +83,16 @@ Features:
  	 97=Uses other fuel
 
 'VEHCOMMERCIAL' - bool on whether you use for commercial purposes
-'VEHCOM_RS' - bool on whether used for rideshare (*)
-'VEHCOM_DEL' - bool on whether used for delivery (*)
-'VEHCOM_OTH' - bool on whether used for other business purposes (*)
-'COMMERCIALFREQ' - over past 30 days, nr days used for business purposes (*)
-'HHVEHUSETIME_RS' - 30 day q. for rideshare (*)
-'HHVEHUSETIME_DEL' - 30 day q. for delivery(*)
-'HHVEHUSETIME_OTH' - 30 day q. for other business activity (* same as COMMERCIALFREQ)
+
 'VEHOWNED' - bool on whether owned for 1 year or more
-'WHOMAIN' - main 'driver' from 'Person 1' to 'Person 8' (*PERSONID isn't here so useless)
+
 'VEHCASEID' - unique vehicle id
 'ANNMILES', - annual miles from 0-200,000
 'HYBRID' - bool on whether hybrid or not
 	01 for yes
 	02 for no
 'VEHAGE' - vehicle age from 1 to 40 
-'VEHOWNMO'- for vehicles owned less than a year, number of months owned 01 - 11
+'VEHOWNMO'- for vehicles owned less than a year, number of months owned 01 - 11 ([HAS 12914 -1 values which is 87.9% of data!]
 
 For the following three, there is an assumption that travel patterns will be significantly different by day the survey was sent to people, so there must be weights to account for that:
 'WTHHFIN' - analysis of all 7 days
@@ -108,7 +102,7 @@ For the following three, there is an assumption that travel patterns will be sig
 'WTHHFIN2D' - analysis of weekends
 
 
-'NUMADLT' - count of adults (18+) from 1 to 8
+
 
 'HOMEOWN' - whether home was rented or bought
 	 01=Owned by hh member with mortgage or loan 8,873 
@@ -140,8 +134,8 @@ For the following three, there is an assumption that travel patterns will be sig
 'CNTTDHH' - Count for household trips on a travel day 0-45
 'CDIVMSAR' - Grouping of household by combination of Census division, MSA status, and presence of rail
 
-'FLAG100' whether all HH members completed the survey 01 is 100%, 02 is 75-99%
-'HHFAMINC' - bad version of HHFAMINC with some I don't prefer to answer (*)
+'FLAG100' whether all HH members completed the survey 01 is 100%, 02 is 75-99% (*)
+
 'HHFAMINC_IMP' - HHFAMINC has inputed data meaning it's now an OBJECT and they typed in the actual range
 	Less than $10,000     301 
         $10,000 to $14,999    245
@@ -213,8 +207,27 @@ For the following three, there is an assumption that travel patterns will be sig
 
 'PPT517' - count of children 5-17 years old in house from 0 to 6
 'YOUNGCHILD' - count of HH members under 5 years old 0 to 4
+
+
 'RESP_CNT' - Count of respondents in HH from 1 to 10
+
+
 'TDAYDATE' - Date of travel day (YYYYMM)
 'WRKCOUNT' - count of workers in the household from 0 - 6
-'STRATUMID' - household stratum ID
 
+
+
+
+#####DROPPED DATA AND REASONING
+'VEHCOM_RS' - bool on whether used for rideshare (* [HAS 13282 -1 values which is 90.5% of data!])
+'VEHCOM_DEL' - bool on whether used for delivery (* [HAS 13282 -1 values which is 90.5% of data!])
+'VEHCOM_OTH' - bool on whether used for other business purposes (* [HAS 13282 -1 values which is 90.5% of data!])
+'COMMERCIALFREQ' - over past 30 days, nr days used for business purposes (* [HAS 13282 -1 values which is 90.5% of data!])
+'HHVEHUSETIME_RS' - 30 day q. for rideshare (* [HAS 14598 -1 values which is 99.4% of data!])
+'HHVEHUSETIME_DEL' - 30 day q. for delivery(* [HAS 13572-1 values which is 98.6% of data!])
+'HHVEHUSETIME_OTH' - 30 day q. for other business activity (* same as COMMERCIALFREQ 92.42% of data is not ascertained!)
+'WHOMAIN' - main 'driver' from 'Person 1' to 'Person 8' (*PERSONID isn't here so useless)
+'HHFAMINC' - bad version of HHFAMINC with some I don't prefer to answer (*)
+
+'STRATUMID' - household stratum ID (* correlation to CENSUS_D)
+'NUMADLT' - count of adults (18+) from 1 to 8
