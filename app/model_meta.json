@@ -1,0 +1,71 @@
+{
+  "features": [
+    "HHFAMINC_IMP",
+    "HHSIZE",
+    "HHVEHCNT",
+    "URBRUR_BIN",
+    "URBANSIZE",
+    "DRVRCNT",
+    "HOMEOWN",
+    "LIF_CYC",
+    "WRKCOUNT",
+    "MSASIZE",
+    "CNTTDHH"
+  ],
+  "feature_ranges": {
+    "HHFAMINC_IMP": [
+      1,
+      11
+    ],
+    "HHSIZE": [
+      1,
+      10
+    ],
+    "HHVEHCNT": [
+      1,
+      17
+    ],
+    "URBRUR_BIN": [
+      0,
+      1
+    ],
+    "URBANSIZE": [
+      1,
+      6
+    ],
+    "DRVRCNT": [
+      0,
+      7
+    ],
+    "HOMEOWN": [
+      1,
+      4
+    ],
+    "LIF_CYC": [
+      1,
+      10
+    ],
+    "WRKCOUNT": [
+      0,
+      6
+    ],
+    "MSASIZE": [
+      1,
+      6
+    ],
+    "CNTTDHH": [
+      0,
+      45
+    ]
+  },
+  "metrics": {
+    "baseline_accuracy": 0.9124,
+    "model_accuracy": 0.6276,
+    "model_roc_auc": 0.6792,
+    "model_precision_class1": 0.139,
+    "model_recall_class1": 0.6256,
+    "leaky_rf_accuracy_original": 0.9625,
+    "leaky_rf_roc_auc_estimate": null
+  },
+  "model_type": "Logistic Regression (class_weight=balanced)"
+}

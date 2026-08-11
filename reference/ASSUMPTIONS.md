@@ -12,10 +12,19 @@
   A household with five vehicles and one hybrid is treated identically to a household with one
   vehicle that's a hybrid.
 
-- **The five selected features (income, household size, vehicle count, urban/rural status, urban
-  area size) are sufficient to model adoption.** Other NHTS variables (commute patterns, driver
-  count, trip counts) were dropped for scope, this assumes they wouldn't meaningfully change the
-  model, which wasn't tested directly.
+- **The eleven demographic/geographic features used in the corrected model (income, household
+  size, vehicle count, urban/rural status, urban area size, driver count, home ownership,
+  life-cycle stage, worker count, MSA size, household member count) are the right ones to keep
+  once vehicle-specific columns are removed for leakage.** Other NHTS variables (commute patterns,
+  trip counts) were dropped for scope, this assumes they wouldn't meaningfully change the 0.68
+  ROC-AUC result, which wasn't tested directly. See `reference/CHALLENGES.md` for why the original
+  36-column feature set (including `VEHFUEL`/`VEHTYPE`) was replaced.
+
+- **Class-weighted Logistic Regression, rather than Random Forest, is the fairer model to report
+  once leakage is removed.** Balancing the loss trades overall accuracy for recall on the rare
+  hybrid-owning class, which assumes that catching more true hybrid owners (at the cost of more
+  false positives) is more useful for this project's purpose than optimizing raw accuracy against
+  a 90%-majority baseline.
 
 - **The 2022 NHTS sample is representative of the households GM would actually want to target.**
   NHTS is a national household travel survey, not a GM customer or prospect database, so this
