@@ -17,10 +17,17 @@ vehicle count, urban/rural status, urban area size, driver count, home ownership
 stage, worker count, MSA size, and household member count, with no vehicle-specific columns,
 gives a materially different and more honest picture: a class-weighted Logistic Regression reaches
 0.68 ROC-AUC, clearly better than chance but nowhere near the original 96.3% accuracy /
-0.99 precision headline. `app/` holds the retrained model and the small Streamlit app built on it.
-Accuracy on its own is a poor stand-in for this at 62.8% given how the balanced weighting trades
-accuracy for the recall that actually matters on a rare class; ROC-AUC is the more honest number to
-report here.
+0.99 precision headline. Accuracy on its own is a poor stand-in for this at 62.8% given how the
+balanced weighting trades accuracy for the recall that actually matters on a rare class; ROC-AUC is
+the more honest number to report here.
+
+That demographics-only number was the starting point, not the final one.
+`preprocessing/honest_household_model.ipynb` builds on it step by step (vehicle-fleet aggregates,
+extra household-composition variables, hyperparameter tuning, a brand-tier proxy, person-level
+features), each addition tested against a cross-validated baseline before being kept, landing at
+0.75 ROC-AUC with a tuned, sigmoid-calibrated XGBoost. `app/` holds that final model, not the
+0.68 baseline; the notebook is the record of every step, including the ones that didn't help
+(SMOTE, trip-level data, respondent sex), see the takeaways table at the end of that notebook.
 
 The takeaway isn't that GM-brand hybrid adoption is unpredictable, it's that this particular
 survey's household demographics carry a modest signal (AUC 0.68, better than a coin flip, well

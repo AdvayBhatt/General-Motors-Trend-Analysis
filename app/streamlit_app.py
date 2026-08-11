@@ -1,11 +1,12 @@
 """
 GM hybrid-ownership predictor.
 
-A small interactive demo built on the corrected, leakage-free model from this project.
-The original Random Forest (96.3% accuracy) turned out to be reading the answer off the
-vehicle's own fuel-type code. This app uses the retrained, honest model instead: household
-demographics only, 0.68 ROC-AUC. See reference/CHALLENGES.md in the main repo for the full
-writeup of what went wrong and how it was fixed.
+A small interactive demo built on the strongest model from this project: a tuned, calibrated
+XGBoost classifier trained on household demographics, vehicle-fleet aggregates, brand-tier
+signal, and person-level features, 0.75 ROC-AUC on 5-fold cross-validation. See
+preprocessing/honest_household_model.ipynb for the full build, including the data leakage bug
+in the original 96.3%-accuracy result and every feature-engineering step that closed part of
+that gap honestly.
 """
 
 import json
@@ -31,14 +32,16 @@ def load_model():
 
 model, meta = load_model()
 metrics = meta["metrics"]
+FEATURES = meta["features"]
+DEFAULTS = meta["background_defaults"]
 
 st.title("Household hybrid-ownership predictor")
 st.caption(
     "A National Household Travel Survey model estimating the probability a household owns "
-    "a hybrid or electric vehicle, from demographics and geography alone."
+    "a hybrid or electric vehicle, from demographics, vehicle fleet, and household composition."
 )
 
-with st.expander("Why this app exists, and why it's honest about a mediocre result", expanded=False):
+with st.expander("Why this app exists, and the honest numbers behind it", expanded=False):
     st.markdown(
         f"""
 The Random Forest in the original project write-up reached **96.3% accuracy**. It turned out
@@ -47,25 +50,26 @@ and every vehicle coded as hybrid/plug-in/electric fuel is, unsurprisingly, a hy
 the time. The model was mostly reading the answer off the vehicle record, not learning
 anything about the household.
 
-This app runs the retrained, leakage-free model instead, demographics and geography only,
-no vehicle-level fields. Its honest performance:
+This app runs the model that was rebuilt from scratch after removing that leak, and then
+strengthened step by step: household demographics alone got to 0.68 ROC-AUC, adding vehicle-fleet
+aggregates (fleet age, mileage), household composition, a brand-tier proxy, and person-level
+features pushed a tuned XGBoost to **{metrics['model_roc_auc_cv']:.2f} ROC-AUC** ({metrics['model_roc_auc_cv_std']:.2f}
+std across 5 folds). Every one of those additions was tested against a cross-validated baseline
+before being kept, several tested ideas (SMOTE rebalancing, trip-level data, respondent sex) made
+things worse or did nothing and were left out, documented as negative results rather than hidden.
 
-- **ROC-AUC: {metrics['model_roc_auc']:.2f}** (0.50 is chance, 1.00 is perfect)
-- Accuracy: {metrics['model_accuracy']*100:.1f}% (the model is weighted toward catching hybrid
-  owners rather than maximizing raw accuracy, since always guessing "no hybrid" already scores
-  {metrics['baseline_accuracy']*100:.1f}%)
-- Precision / recall on hybrid-owning households: {metrics['model_precision_class1']*100:.0f}% /
-  {metrics['model_recall_class1']*100:.0f}%
-
-A real signal, well short of a reliable classifier. Treat the number below as "how much this
-household's profile resembles a hybrid-owning one," not a confident prediction.
+Raw XGBoost probabilities on an imbalanced target like this one are overconfident, a household the
+model scores at "70% probability" doesn't actually own a hybrid 70% of the time. This app uses the
+**calibrated** version (sigmoid/Platt scaling), which cut the Brier score from
+{metrics['brier_score_uncalibrated']:.3f} to {metrics['brier_score_calibrated']:.3f} with no
+change to the model's ranking ability. That's also why the predicted probability below usually
+looks lower than you might expect: only {metrics['baseline_rate']*100:.1f}% of households in the
+data actually own a hybrid, and a properly calibrated model reflects that.
         """
     )
 
 st.divider()
 st.subheader("Household profile")
-
-col1, col2 = st.columns(2)
 
 INCOME_LABELS = {
     1: "Less than $10,000", 2: "$10,000-$14,999", 3: "$15,000-$24,999",
@@ -89,59 +93,79 @@ MSASIZE_LABELS = {
     3: "Metro area 500,000-999,999", 4: "Metro area 1-3 million",
     5: "Metro area 3 million+", 6: "Not in a metro area",
 }
-URBANSIZE_LABELS = {
-    1: "Urban area 50,000-199,999", 2: "Urban area 200,000-499,999",
-    3: "Urban area 500,000-999,999", 4: "Urban area 1M+ with heavy rail",
-    5: "Urban area 1M+ without heavy rail", 6: "Not in an urbanized area",
-}
+CENSUS_R_LABELS = {1: "Northeast", 2: "Midwest", 3: "South", 4: "West"}
+
+col1, col2 = st.columns(2)
 
 with col1:
     income = st.selectbox("Household income", list(INCOME_LABELS), format_func=lambda x: INCOME_LABELS[x], index=5)
     hhsize = st.slider("Household size (people)", 1, 8, 3)
     vehcnt = st.slider("Vehicles owned", 0, 6, 2)
-    drvrcnt = st.slider("Number of drivers", 0, 5, 2)
     wrkcount = st.slider("Number of workers", 0, 4, 1)
-
-with col2:
     urban = st.selectbox("Urban or rural", [1, 0], format_func=lambda x: "Urban" if x == 1 else "Rural")
     homeown = st.selectbox("Home ownership", list(HOMEOWN_LABELS), format_func=lambda x: HOMEOWN_LABELS[x])
+    census_r = st.selectbox("Region", list(CENSUS_R_LABELS), format_func=lambda x: CENSUS_R_LABELS[x], index=2)
+
+with col2:
     lifcyc = st.selectbox("Life-cycle stage", list(LIFCYC_LABELS), format_func=lambda x: LIFCYC_LABELS[x], index=1)
     msasize = st.selectbox("Metro area size", list(MSASIZE_LABELS), format_func=lambda x: MSASIZE_LABELS[x])
-    urbansize = st.selectbox("Urban area size", list(URBANSIZE_LABELS), format_func=lambda x: URBANSIZE_LABELS[x])
+    min_vehicle_age = st.slider("Newest vehicle's age (years)", 0, 30, 5)
+    max_vehicle_age = st.slider("Oldest vehicle's age (years)", 0, 30, 11)
+    avg_annual_miles = st.slider("Average annual miles per vehicle", 0, 30000, 7500, step=500)
+    premium_brand = st.selectbox(
+        "Owns a premium-brand vehicle?",
+        [0, 1],
+        format_func=lambda x: "Yes (Lincoln, Cadillac, Audi, BMW, Mercedes, Volvo, Acura, Infiniti, Lexus)" if x == 1 else "No",
+    )
 
-cnttdhh = st.slider("Household trips taken on the survey travel day", 0, 20, 4)
+if max_vehicle_age < min_vehicle_age:
+    max_vehicle_age = min_vehicle_age
 
-input_row = pd.DataFrame([{
+row = dict(DEFAULTS)
+row.update({
     "HHFAMINC_IMP": income,
     "HHSIZE": hhsize,
     "HHVEHCNT": vehcnt,
     "URBRUR_BIN": urban,
-    "URBANSIZE": urbansize,
-    "DRVRCNT": drvrcnt,
     "HOMEOWN": homeown,
-    "LIF_CYC": lifcyc,
     "WRKCOUNT": wrkcount,
+    "LIF_CYC": lifcyc,
     "MSASIZE": msasize,
-    "CNTTDHH": cnttdhh,
-}])[meta["features"]]
+    "CENSUS_R": census_r,
+    "min_vehicle_age": min_vehicle_age,
+    "max_vehicle_age": max_vehicle_age,
+    "avg_annual_miles": avg_annual_miles,
+    "pct_premium_brand": premium_brand,
+})
+input_row = pd.DataFrame([row])[FEATURES]
+
+with st.expander("Fields not shown above (held at typical household values)", expanded=False):
+    st.caption(
+        "This model uses 28 features in total. The 13 above are the most interpretable and "
+        "highest-importance ones, exposed as inputs. The rest (household trip count, driver "
+        "count, urban-area size, rail access, number of distinct vehicle types, commercial "
+        "vehicle share, region/division grouping, presence of young children, average "
+        "respondent age and commute distance, and household education level) are held at their "
+        "dataset median or most common value, shown below, so the form stays usable without "
+        "quietly ignoring 15 of the 28 features the model was actually trained on."
+    )
+    st.json({k: v for k, v in DEFAULTS.items() if k not in row})
 
 if st.button("Predict", type="primary"):
     proba = model.predict_proba(input_row)[0, 1]
     st.metric("Predicted probability of hybrid/EV ownership", f"{proba:.1%}")
     st.progress(min(max(proba, 0.0), 1.0))
-    if proba > 0.5:
-        st.write("Above the model's decision threshold, this profile leans toward hybrid ownership.")
-    else:
-        st.write("Below the model's decision threshold, this profile leans toward conventional-vehicle ownership.")
-    st.caption(
-        f"For reference, {metrics['baseline_accuracy']*100:.1f}% of households in the training "
-        "data owned no hybrid at all, hybrid ownership is a rare outcome, so treat this as a "
-        "relative signal rather than a confident yes/no."
+    ratio = proba / metrics["baseline_rate"] if metrics["baseline_rate"] else 0
+    st.write(
+        f"That's **{ratio:.1f}x** the average household's rate ({metrics['baseline_rate']*100:.1f}%). "
+        "Hybrid ownership is a rare outcome in this data, so probabilities well under 50% can "
+        "still represent a meaningfully above-average household."
     )
 
 st.divider()
 st.caption(
-    "Data: 2022 National Household Travel Survey (NHTS). Model: class-weighted Logistic "
-    "Regression on 11 household/person demographic and geographic features. Full writeup, "
-    "including the leakage bug this app corrects for, in reference/CHALLENGES.md."
+    "Data: 2022 National Household Travel Survey (NHTS). Model: XGBoost, tuned via "
+    "RandomizedSearchCV, sigmoid-calibrated, 28 features across demographics, vehicle fleet, "
+    "household composition, and person-level aggregates. Full build and every tested "
+    "alternative in preprocessing/honest_household_model.ipynb."
 )

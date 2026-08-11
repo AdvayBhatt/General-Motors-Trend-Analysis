@@ -1,15 +1,18 @@
 # GM hybrid-ownership predictor (Streamlit)
 
-Interactive demo built on the corrected, leakage-free model from this project. See the main
-[README](../README.md) and [reference/CHALLENGES.md](../reference/CHALLENGES.md) for how the
-original 96.3%-accuracy Random Forest turned out to be a data leakage artifact, and how this
-model was retrained honestly on demographics alone (0.68 ROC-AUC).
+Interactive demo built on the strongest model from this project. See the main
+[README](../README.md), [reference/CHALLENGES.md](../reference/CHALLENGES.md), and
+`preprocessing/honest_household_model.ipynb` for the full build: how the original
+96.3%-accuracy Random Forest turned out to be a data leakage artifact, how a demographics-only
+retrain landed at a modest but honest 0.68 ROC-AUC, and how vehicle-fleet aggregates, household
+composition, a brand-tier proxy, and person-level features pushed a tuned, calibrated XGBoost to
+0.75 ROC-AUC, tested against a cross-validated baseline at every step.
 
 ## Files
 
 - `streamlit_app.py` — the app
-- `gm_hybrid_model.joblib` — the trained, class-weighted Logistic Regression pipeline (scaler + model)
-- `model_meta.json` — feature list, value ranges, and the honest evaluation metrics the app displays
+- `gm_hybrid_model.joblib` — `CalibratedClassifierCV` wrapping the tuned XGBoost classifier (sigmoid calibration)
+- `model_meta.json` — full 28-feature list, the 13 exposed as app inputs, background defaults for the rest, value ranges, and the honest evaluation metrics the app displays
 - `requirements.txt` — dependencies for local runs and Streamlit Cloud
 
 ## Run locally
@@ -30,5 +33,5 @@ streamlit run streamlit_app.py
 6. Once live, copy the app URL into the portfolio's GM project card (`demo` field in
    `projects-section.tsx`) so the "Live Demo" link on the site points at it.
 
-The model file is small (a Logistic Regression pipeline, not a deep model) so it's committed
-directly to the repo rather than downloaded at runtime.
+The model file is a calibrated XGBoost pipeline, not a deep model, about 1.7MB, so it's
+committed directly to the repo rather than downloaded at runtime.

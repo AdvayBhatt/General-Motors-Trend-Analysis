@@ -10,62 +10,192 @@
     "LIF_CYC",
     "WRKCOUNT",
     "MSASIZE",
-    "CNTTDHH"
+    "CNTTDHH",
+    "max_vehicle_age",
+    "min_vehicle_age",
+    "avg_annual_miles",
+    "n_distinct_vehicle_types",
+    "pct_commercial",
+    "NUMADLT",
+    "HOMETYPE",
+    "RAIL_ACCESS",
+    "CDIVMSAR",
+    "PPT517",
+    "YOUNGCHILD",
+    "RESP_CNT",
+    "CENSUS_R",
+    "pct_premium_brand",
+    "avg_age",
+    "max_educ",
+    "avg_commute_dist"
   ],
+  "ui_features": [
+    "HHFAMINC_IMP",
+    "HHSIZE",
+    "HHVEHCNT",
+    "URBRUR_BIN",
+    "HOMEOWN",
+    "WRKCOUNT",
+    "LIF_CYC",
+    "min_vehicle_age",
+    "max_vehicle_age",
+    "avg_annual_miles",
+    "pct_premium_brand",
+    "CENSUS_R",
+    "MSASIZE"
+  ],
+  "background_defaults": {
+    "HHFAMINC_IMP": 7,
+    "HHSIZE": 2,
+    "HHVEHCNT": 2,
+    "URBRUR_BIN": 1,
+    "URBANSIZE": 5,
+    "DRVRCNT": 2,
+    "HOMEOWN": 2,
+    "LIF_CYC": 6,
+    "WRKCOUNT": 1,
+    "MSASIZE": 4,
+    "CNTTDHH": 3,
+    "max_vehicle_age": 11,
+    "min_vehicle_age": 5,
+    "avg_annual_miles": 7500,
+    "n_distinct_vehicle_types": 1,
+    "pct_commercial": 0,
+    "NUMADLT": 2,
+    "HOMETYPE": 1,
+    "RAIL_ACCESS": 0,
+    "CDIVMSAR": 53,
+    "PPT517": 0,
+    "YOUNGCHILD": 0,
+    "RESP_CNT": 2,
+    "CENSUS_R": 3,
+    "pct_premium_brand": 0,
+    "avg_age": 53,
+    "max_educ": 6,
+    "avg_commute_dist": 0.600413443432624
+  },
   "feature_ranges": {
     "HHFAMINC_IMP": [
-      1,
-      11
+      1.0,
+      11.0
     ],
     "HHSIZE": [
-      1,
-      10
+      1.0,
+      10.0
     ],
     "HHVEHCNT": [
-      1,
-      17
+      1.0,
+      17.0
     ],
     "URBRUR_BIN": [
-      0,
-      1
+      0.0,
+      1.0
     ],
     "URBANSIZE": [
-      1,
-      6
+      1.0,
+      6.0
     ],
     "DRVRCNT": [
-      0,
-      7
+      0.0,
+      7.0
     ],
     "HOMEOWN": [
-      1,
-      4
+      1.0,
+      4.0
     ],
     "LIF_CYC": [
-      1,
-      10
+      1.0,
+      10.0
     ],
     "WRKCOUNT": [
-      0,
-      6
+      0.0,
+      6.0
     ],
     "MSASIZE": [
-      1,
-      6
+      1.0,
+      6.0
     ],
     "CNTTDHH": [
-      0,
-      45
+      0.0,
+      45.0
+    ],
+    "max_vehicle_age": [
+      1.0,
+      40.0
+    ],
+    "min_vehicle_age": [
+      1.0,
+      40.0
+    ],
+    "avg_annual_miles": [
+      -9.0,
+      200000.0
+    ],
+    "n_distinct_vehicle_types": [
+      1.0,
+      6.0
+    ],
+    "pct_commercial": [
+      0.0,
+      1.0
+    ],
+    "NUMADLT": [
+      1.0,
+      8.0
+    ],
+    "HOMETYPE": [
+      1.0,
+      5.0
+    ],
+    "RAIL_ACCESS": [
+      0.0,
+      1.0
+    ],
+    "CDIVMSAR": [
+      11.0,
+      94.0
+    ],
+    "PPT517": [
+      0.0,
+      6.0
+    ],
+    "YOUNGCHILD": [
+      0.0,
+      4.0
+    ],
+    "RESP_CNT": [
+      1.0,
+      10.0
+    ],
+    "CENSUS_R": [
+      1.0,
+      4.0
+    ],
+    "pct_premium_brand": [
+      0.0,
+      1.0
+    ],
+    "avg_age": [
+      11.8,
+      92.0
+    ],
+    "max_educ": [
+      1.0,
+      8.0
+    ],
+    "avg_commute_dist": [
+      0.0,
+      100.0
     ]
   },
   "metrics": {
-    "baseline_accuracy": 0.9124,
-    "model_accuracy": 0.6276,
-    "model_roc_auc": 0.6792,
-    "model_precision_class1": 0.139,
-    "model_recall_class1": 0.6256,
-    "leaky_rf_accuracy_original": 0.9625,
-    "leaky_rf_roc_auc_estimate": null
+    "baseline_rate": 0.0875,
+    "model_roc_auc_cv": 0.7515,
+    "model_roc_auc_cv_std": 0.0239,
+    "brier_score_calibrated": 0.0735,
+    "brier_score_uncalibrated": 0.184,
+    "demographics_only_roc_auc": 0.6792,
+    "leaky_rf_accuracy_original": 0.9625
   },
-  "model_type": "Logistic Regression (class_weight=balanced)"
+  "model_type": "XGBoost (RandomizedSearchCV-tuned) + sigmoid probability calibration"
 }
