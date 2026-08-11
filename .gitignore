@@ -1,0 +1,10 @@
+# GM's own challenge brief, shared privately with Aggie Data Science teams
+# (includes a private Google Doc link) - not ours to publish
+reference/Preselected Topics List.docx
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
