@@ -31,9 +31,9 @@ Vehicle and household data are merged on `HOUSEID`, then grouped to one row per 
 | Random Forest | 96.3% | 99% precision, 62% recall on the hybrid-owner class |
 | Neural Network (Keras) | 90.8% | Best validation accuracy across 1000 epochs |
 
-Random Forest was the standout, but the precision/recall split matters. It is very confident when it predicts hybrid ownership, but still misses a meaningful share of actual hybrid-owning households, expected given hybrid ownership is a rare class in the data.
+Random Forest was the standout, but the precision/recall split matters. It is very confident when it predicts hybrid ownership, but still misses a meaningful share of actual hybrid-owning households, expected given hybrid ownership is a rare class in the data. `figures/model_comparison.png` charts all four models against the always-predict-majority-class baseline, which most of them barely beat.
 
-`Research/first_thoughts.txt` has the original variable-by-variable notes from scoping the project against the NHTS codebook.
+`reference/variable_scoping_notes.txt` has the original variable-by-variable notes from scoping the project against the NHTS codebook. `reference/CHALLENGES.md` and `reference/ASSUMPTIONS.md` cover what didn't make it into the numbers above, including that the model predicts hybrid ownership generally rather than GM-brand ownership specifically, worth reading before taking the 96.3% at face value.
 
 ## Running it
 
